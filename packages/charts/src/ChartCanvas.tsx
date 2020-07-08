@@ -1,4 +1,3 @@
-import { extent as d3Extent, max, min } from "d3-array";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 
@@ -13,21 +12,16 @@ import {
     noop,
     shallowEqual,
 } from "./utils";
-
-import {
-    // @ts-ignore
-    lastVisibleItemBasedZoomAnchor,
-    mouseBasedZoomAnchor,
-    // @ts-ignore
-    rightDomainBasedZoomAnchor,
-} from "./utils/zoomBehavior";
-
+import { extent as d3Extent, max, min } from "d3-array";
 import { getChartConfigWithUpdatedYScales, getCurrentCharts, getCurrentItem, getNewChartConfig } from "./utils/ChartDataUtil";
 
-import { EventCapture } from "./EventCapture";
-
 import { CanvasContainer } from "./CanvasContainer";
+import { EventCapture } from "./EventCapture";
 import evaluator from "./scale/evaluator";
+import { generateChartId } from "./utils/identity";
+import {
+    mouseBasedZoomAnchor,
+} from "./utils/zoomBehavior";
 
 const CANDIDATES_FOR_RESET = [
     "seriesName",
@@ -1230,7 +1224,7 @@ export class ChartCanvas extends React.Component<ChartCanvasProps, ChartCanvasSt
                             <rect x="0" y="0" width={dimensions.width} height={dimensions.height} />
                         </clipPath>
                         {chartConfig
-                            .map((each, idx) => <clipPath key={idx} id={`chart-area-clip-${each.id}`}>
+                            .map((each, idx) => <clipPath key={idx} id={`chart-area-clip-${each.id? each.id : generateChartId(each)}`}>
                                 <rect x="0" y="0" width={each.width} height={each.height} />
                             </clipPath>)}
                     </defs>

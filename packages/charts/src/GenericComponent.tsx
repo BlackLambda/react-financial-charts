@@ -9,6 +9,8 @@ import {
     noop,
 } from "./utils";
 
+import { generateChartId } from "./utils/identity";
+
 const aliases = {
     mouseleave: "mousemove", // to draw interactive after mouse exit
     panend: "pan",
@@ -483,7 +485,7 @@ class GenericComponent extends React.Component<GenericComponentProps, GenericCom
             return null;
         }
 
-        const suffix = isDefined(chartId) ? "-" + chartId : "";
+        const suffix = isDefined(chartId) ? "-" + chartId : generateChartId(this);
 
         const style = clip ? { clipPath: `url(#chart-area-clip${suffix})` } : undefined;
 

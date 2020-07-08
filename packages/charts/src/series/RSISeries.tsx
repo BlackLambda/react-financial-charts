@@ -1,10 +1,12 @@
 import * as React from "react";
+
+import { LineSeries } from "./LineSeries";
+import { SVGComponent } from "./SVGComponent";
+import { StraightLine } from "./StraightLine";
+import { generateChartId } from "../utils/identity";
 import {
     strokeDashTypes,
 } from "../utils";
-import { LineSeries } from "./LineSeries";
-import { StraightLine } from "./StraightLine";
-import { SVGComponent } from "./SVGComponent";
 
 interface RSISeriesProps {
     readonly className?: string;
@@ -75,8 +77,8 @@ export class RSISeries extends React.Component<RSISeriesProps> {
         overBought: 30,
     };
 
-    private clipPathId1 = `rsi-clip-${String(Math.round(Math.random() * 10000 * 10000))}`;
-    private clipPathId2 = `rsi-clip-${String(Math.round(Math.random() * 10000 * 10000))}`;
+    private clipPathId1 = `rsi-clip-${String(generateChartId())}`;
+    private clipPathId2 = `rsi-clip-${String(generateChartId())}`;
 
     public render() {
         const {

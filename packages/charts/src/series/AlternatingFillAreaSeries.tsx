@@ -1,8 +1,9 @@
 import * as React from "react";
 
-import { strokeDashTypes } from "../utils";
 import { AreaSeries } from "./AreaSeries";
 import { SVGComponent } from "./SVGComponent";
+import { generateChartId } from "../utils/identity";
+import { strokeDashTypes } from "../utils";
 
 interface AlternatingFillAreaSeriesProps {
     readonly baseAt: number;
@@ -65,8 +66,8 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
         },
     };
 
-    private clipPathId1 = `alternating-area-clip-${String(Math.round(Math.random() * 10000 * 10000))}`;
-    private clipPathId2 = `alternating-area-clip-${String(Math.round(Math.random() * 10000 * 10000))}`;
+    private clipPathId1 = `alternating-area-clip-${String(generateChartId())}`;
+    private clipPathId2 = `alternating-area-clip-${String(generateChartId())}`;
 
     public render() {
         const {
