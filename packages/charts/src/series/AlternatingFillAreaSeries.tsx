@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { AreaSeries } from "./AreaSeries";
 import { SVGComponent } from "./SVGComponent";
+import { any } from "prop-types";
 import { generateChartId } from "../utils/identity";
 import { strokeDashTypes } from "../utils";
 
@@ -37,7 +38,6 @@ interface AlternatingFillAreaSeriesProps {
         top: any;
         bottom: any;
     };
-	readonly interpolation?: any;
     readonly yAccessor: (data: any) => number;
 }
 
@@ -70,10 +70,9 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
             bottom: "Solid" as strokeDashTypes,
         },
 		canvasGradient:{
-            top: any;
-            bottom: any;
-        },
-		interpolation: undefined
+            top: any,
+            bottom: any
+        }
     };
 
     private clipPathId1 = `alternating-area-clip-${String(generateChartId())}`;
@@ -90,6 +89,7 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
             strokeDasharray = AlternatingFillAreaSeries.defaultProps.strokeDasharray,
             fill = AlternatingFillAreaSeries.defaultProps.fill,
             fillOpacity = AlternatingFillAreaSeries.defaultProps.fillOpacity,
+            canvasGradient
         } = this.props;
 
         const style1 = { clipPath: `url(#${this.clipPathId1})` };
