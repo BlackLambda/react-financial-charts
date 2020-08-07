@@ -33,6 +33,11 @@ interface AlternatingFillAreaSeriesProps {
         top: strokeDashTypes;
         bottom: strokeDashTypes;
     };
+	readonly canvasGradient?:{
+        top: any;
+        bottom: any;
+    };
+	readonly interpolation?: any;
     readonly yAccessor: (data: any) => number;
 }
 
@@ -64,6 +69,11 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
             top: "Solid" as strokeDashTypes,
             bottom: "Solid" as strokeDashTypes,
         },
+		canvasGradient:{
+            top: any;
+            bottom: any;
+        },
+		interpolation: undefined
     };
 
     private clipPathId1 = `alternating-area-clip-${String(generateChartId())}`;
@@ -102,6 +112,7 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
                     strokeOpacity={strokeOpacity.top}
                     strokeDasharray={strokeDasharray.top}
                     strokeWidth={strokeWidth.top}
+					canvasGradient={canvasGradient.top}
                 />
                 <AreaSeries
                     style={style2}
@@ -115,6 +126,7 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
                     strokeOpacity={strokeOpacity.bottom}
                     strokeDasharray={strokeDasharray.bottom}
                     strokeWidth={strokeWidth.bottom}
+					canvasGradient={canvasGradient.bottom}
                 />
             </g>
         );
