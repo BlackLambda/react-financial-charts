@@ -1,7 +1,8 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import { strokeDashTypes } from "../utils";
+
 import Axis from "./Axis";
+import { strokeDashTypes } from "../utils";
 
 interface XAxisProps {
     readonly axisAt?: number | "top" | "bottom" | "middle";
@@ -148,7 +149,7 @@ export class XAxis extends React.Component<XAxisProps> {
             range: [0, width],
             getScale: this.getXScale,
             bg: { x, y, h, w },
-            ticks: ticks ?? this.getXTicks(width),
+            ticks: ticks ? ticks: this.getXTicks(width)
         };
     }
 

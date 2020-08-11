@@ -1,12 +1,13 @@
 {
   "name": "react-finchart",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "React charts specific to finance.",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "files": [
     "lib",
-    "src"
+    "src",
+	"tsconfig.json"
   ],
   "sideEffects": false,
   "author": "BlackLambda",

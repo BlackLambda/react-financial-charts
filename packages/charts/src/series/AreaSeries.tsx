@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-import { strokeDashTypes } from "../utils";
 import { AreaOnlySeries } from "./AreaOnlySeries";
 import { LineSeries } from "./LineSeries";
+import { strokeDashTypes } from "../utils";
 
 interface AreaSeriesProps {
     readonly baseAt?: number | ((yScale: any, d: [number, number], moreProps: any) => number);
@@ -21,6 +21,8 @@ interface AreaSeriesProps {
     readonly strokeWidth?: number;
     readonly style?: React.CSSProperties;
     readonly yAccessor: (data: any) => number;
+    readonly areaConnectNull?: (data: any) => boolean;
+    readonly lineConnectNull?: boolean;
 }
 
 /**
@@ -53,6 +55,8 @@ export class AreaSeries extends Component<AreaSeriesProps> {
             style,
             canvasClip,
             yAccessor,
+            areaConnectNull,
+            lineConnectNull
         } = this.props;
 
         return (
@@ -67,6 +71,7 @@ export class AreaSeries extends Component<AreaSeriesProps> {
                     style={style}
                     canvasClip={canvasClip}
                     stroke="none"
+                    connectNull={areaConnectNull}
                 />
                 <LineSeries
                     yAccessor={yAccessor}
@@ -76,6 +81,7 @@ export class AreaSeries extends Component<AreaSeriesProps> {
                     strokeDasharray={strokeDasharray}
                     interpolation={interpolation}
                     style={style}
+                    connectNulls = {lineConnectNull}
                     canvasClip={canvasClip}
                     fill="none"
                     highlightOnHover={false}

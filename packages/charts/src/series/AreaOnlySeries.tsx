@@ -1,10 +1,10 @@
-import { area as d3Area } from "d3-shape";
 import * as React from "react";
 
-import GenericChartComponent from "../GenericChartComponent";
-import { getAxisCanvas } from "../GenericComponent";
-
 import { colorToRGBA, first, functor, isDefined } from "../utils";
+
+import GenericChartComponent from "../GenericChartComponent";
+import { area as d3Area } from "d3-shape";
+import { getAxisCanvas } from "../GenericComponent";
 
 interface AreaOnlySeriesProps {
     readonly base?: number | ((yScale: any, d: [number, number], moreProps: any) => number);
@@ -18,6 +18,7 @@ interface AreaOnlySeriesProps {
     readonly stroke?: string;
     readonly style?: React.CSSProperties;
     readonly yAccessor: (data: any) => number;
+    readonly connectNull?:(data: any)=> boolean;
 }
 
 export class AreaOnlySeries extends React.Component<AreaOnlySeriesProps> {
@@ -53,6 +54,7 @@ export class AreaOnlySeries extends React.Component<AreaOnlySeriesProps> {
         const newBase = functor(base);
         const areaSeries = d3Area()
             .defined((d) => defined(yAccessor(d)))
+            .defined((d) => {return true})
             .x((d) => Math.round(xScale(xAccessor(d))))
             .y0((d) => newBase(yScale, d, moreProps))
             .y1((d) => Math.round(yScale(yAccessor(d))));
@@ -80,7 +82,7 @@ export class AreaOnlySeries extends React.Component<AreaOnlySeriesProps> {
     }
 
     private readonly drawOnCanvas = (ctx: CanvasRenderingContext2D, moreProps) => {
-        const { yAccessor, defined, base, canvasGradient } = this.props;
+        const { yAccessor, defined, base, canvasGradient, connectNull } = this.props;
         const {
             fill = AreaOnlySeries.defaultProps.fill,
             stroke,
@@ -106,7 +108,7 @@ export class AreaOnlySeries extends React.Component<AreaOnlySeriesProps> {
         ctx.beginPath();
         const newBase = functor(base);
         const areaSeries = d3Area()
-            .defined((d) => defined(yAccessor(d)))
+            .defined((d) => defined(yAccessor(d)?true:connectNull(d)))
             .x((d) => Math.round(xScale(xAccessor(d))))
             .y0((d) => newBase(yScale, d, moreProps))
             .y1((d) => Math.round(yScale(yAccessor(d))))

@@ -39,6 +39,8 @@ interface AlternatingFillAreaSeriesProps {
         bottom: any;
     };
     readonly yAccessor: (data: any) => number;
+    readonly areaConnectNull?: (data:any) => boolean;
+    readonly lineConnectNull?: boolean;
 }
 
 export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAreaSeriesProps> {
@@ -89,7 +91,9 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
             strokeDasharray = AlternatingFillAreaSeries.defaultProps.strokeDasharray,
             fill = AlternatingFillAreaSeries.defaultProps.fill,
             fillOpacity = AlternatingFillAreaSeries.defaultProps.fillOpacity,
-            canvasGradient
+            canvasGradient,
+            areaConnectNull,
+            lineConnectNull
         } = this.props;
 
         const style1 = { clipPath: `url(#${this.clipPathId1})` };
@@ -112,7 +116,9 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
                     strokeOpacity={strokeOpacity.top}
                     strokeDasharray={strokeDasharray.top}
                     strokeWidth={strokeWidth.top}
-					canvasGradient={canvasGradient.top}
+                    canvasGradient={canvasGradient.top}
+                    areaConnectNull={areaConnectNull}
+                    lineConnectNull={lineConnectNull}
                 />
                 <AreaSeries
                     style={style2}
@@ -126,7 +132,9 @@ export class AlternatingFillAreaSeries extends React.Component<AlternatingFillAr
                     strokeOpacity={strokeOpacity.bottom}
                     strokeDasharray={strokeDasharray.bottom}
                     strokeWidth={strokeWidth.bottom}
-					canvasGradient={canvasGradient.bottom}
+                    canvasGradient={canvasGradient.bottom}
+                    areaConnectNull={areaConnectNull}
+                    lineConnectNull={lineConnectNull}
                 />
             </g>
         );

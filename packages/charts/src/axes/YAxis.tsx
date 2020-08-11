@@ -1,7 +1,8 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import { strokeDashTypes } from "../utils";
+
 import Axis from "./Axis";
+import { strokeDashTypes } from "../utils";
 
 interface YAxisProps {
     readonly axisAt?: number | "left" | "right" | "middle";
@@ -147,8 +148,8 @@ export class YAxis extends React.Component<YAxisProps> {
             range: [0, height],
             getScale: this.getYScale,
             bg: { x, y, h, w },
-            ticks: ticks ?? this.getYTicks(height),
-            zoomEnabled: context.chartConfig.yPan,
+            ticks: ticks ? ticks: this.getYTicks(height),
+            zoomEnabled: context.chartConfig.yPan
         };
     }
 
