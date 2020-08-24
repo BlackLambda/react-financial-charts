@@ -1,9 +1,10 @@
-import { sum } from "d3-array";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import GenericComponent from "../GenericComponent";
 
 import { colorToRGBA, first, isDefined, isNotDefined, last } from "../utils";
+
+import GenericComponent from "../GenericComponent";
+import { sum } from "d3-array";
 
 interface HoverTooltipProps {
     readonly chartId?: number | string;
@@ -12,12 +13,17 @@ interface HoverTooltipProps {
     readonly backgroundShapeSVG?: any; // func
     readonly bgwidth?: number;
     readonly bgheight?: number;
+    readonly bgradius?: number
     readonly bgFill: string;
     readonly bgOpacity: number;
     readonly tooltipContent: any; // func
     readonly origin: number[] | any; // func
     readonly fontFamily?: string;
     readonly fontSize?: number;
+    readonly followYscale?: boolean;
+    readonly xOrigin?: number;
+    readonly yOrigin?: number;
+    readonly showHoverTip?: (data: any) => boolean;
 }
 
 class HoverTooltip extends React.Component<HoverTooltipProps> {
@@ -29,7 +35,7 @@ class HoverTooltip extends React.Component<HoverTooltipProps> {
         //fill: "#D4E2FD",
         //bgFill: "#D4E2FD",
         //bgOpacity: 0.5,
-		fill: "white",
+        fill: "white",
         bgFill: "white",
         bgOpacity: 0.0,
         stroke: "#9B9BFF",
@@ -89,10 +95,13 @@ class HoverTooltip extends React.Component<HoverTooltipProps> {
     }
     private readonly drawOnCanvas = (ctx: CanvasRenderingContext2D, moreProps) => {
         const pointer = helper(this.props, moreProps, ctx);
-        const { height } = moreProps;
-
+        const { height, currentItem } = moreProps;
+        const { showHoverTip } = this.props;
         if (isNotDefined(pointer)) {
             return null;
+        }
+        if(showHoverTip && currentItem){
+            if(!showHoverTip(currentItem)) return null;
         }
 
         drawOnCanvas(ctx, this.props, this.context, pointer, height);
@@ -130,24 +139,37 @@ function defaultTooltipSVG({ fontFamily, fontSize, fontFill }, content) {
     </text>;
 }
 
-function defaultBackgroundShapeCanvas(props, { width, height }, ctx) {
-    const { fill, stroke, opacity } = props;
+function roundRect(ctx, x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+    return ctx;
+}
 
+function defaultBackgroundShapeCanvas(props, { width, height }, ctx) {
+    const { fill, stroke, opacity, bgradius, bgwidth, bgheight } = props;
     ctx.fillStyle = colorToRGBA(fill, opacity);
     ctx.strokeStyle = stroke;
     ctx.beginPath();
-    ctx.rect(0, 0, width, height);
+    ctx = roundRect(ctx, 0, 0, Math.max(width,bgwidth), Math.max(height, bgheight), bgradius ? bgradius: height / 4)
+    // ctx.rect(0, 0, width, height);
     ctx.fill();
     ctx.stroke();
 }
 
 function defaultTooltipCanvas({ fontFamily, fontSize, fontFill }, content, ctx) {
     const startY = Y + fontSize * 0.9;
-    ctx.font = `${fontSize}px ${fontFamily}`;
+    ctx.font = `bold ${fontSize}px ${fontFamily}`;
     ctx.fillStyle = fontFill;
     ctx.textAlign = "left";
     ctx.fillText(content.x, X, startY);
-
+    ctx.font = `${fontSize}px ${fontFamily}`;
     for (let i = 0; i < content.y.length; i++) {
         const y = content.y[i];
         const textY = startY + (fontSize * (i + 1));
@@ -155,7 +177,8 @@ function defaultTooltipCanvas({ fontFamily, fontSize, fontFill }, content, ctx) 
         ctx.fillText(y.label, X, textY);
 
         ctx.fillStyle = fontFill;
-        ctx.fillText(": " + y.value, X + ctx.measureText(y.label).width, textY);
+        ctx.fillText(y.value, X + ctx.measureText(y.label).width, textY);
+        // ctx.fillText(": " + y.value, X + ctx.measureText(y.label).width, textY);
     }
 }
 
@@ -238,7 +261,7 @@ function normalizeY(y, bgSize) {
 
 function defaultOrigin(props, moreProps, bgSize, pointWidth) {
     const { chartId, yAccessor } = props;
-    const { mouseXY, xAccessor, currentItem, xScale, chartConfig, width } = moreProps;
+    const { mouseXY, xAccessor, currentItem, xScale, chartConfig, chartConfig: { yScale }, width } = moreProps;
 
     // @ts-ignore
     let y = last(mouseXY);
@@ -254,9 +277,21 @@ function defaultOrigin(props, moreProps, bgSize, pointWidth) {
         y = Math.round(chartConfig[chartIndex].yScale(yValue));
     }
 
-    x = normalizeX(x, bgSize, pointWidth, width);
-    y = normalizeY(y, bgSize);
-
+    if (isDefined(props.xOrigin)) {
+        x = props.xOrigin;
+    }
+    else {
+        x = normalizeX(x, bgSize, pointWidth, width);
+    }
+    if (isDefined(props.yOrigin)) {
+        y = props.yOrigin;
+    }
+    else if (props.followYscale == true) {
+        y = Math.round(yScale(yAccessor(currentItem)));
+    }
+    else {
+        y = normalizeY(y, bgSize);
+    }
     return [x, y];
 }
 

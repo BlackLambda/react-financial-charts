@@ -108,7 +108,7 @@ export class AreaOnlySeries extends React.Component<AreaOnlySeriesProps> {
         ctx.beginPath();
         const newBase = functor(base);
         const areaSeries = d3Area()
-            .defined((d) => defined(yAccessor(d)?true:connectNull(d)))
+            .defined((d) => defined(yAccessor(d)) ? true : connectNull(d))
             .x((d) => Math.round(xScale(xAccessor(d))))
             .y0((d) => newBase(yScale, d, moreProps))
             .y1((d) => Math.round(yScale(yAccessor(d))))

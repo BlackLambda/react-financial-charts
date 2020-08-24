@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+
 import GenericComponent, { getMouseCanvas } from "../GenericComponent";
 import { colorToRGBA, getStrokeDasharray, getStrokeDasharrayCanvas, isNotDefined, strokeDashTypes } from "../utils";
 
@@ -9,6 +10,8 @@ interface CrossHairCursorProps {
     readonly opacity?: number;
     readonly snapX?: boolean;
     readonly stroke?: string;
+    readonly showX?: boolean;
+    readonly showY?: boolean;
     readonly strokeDasharray?: strokeDashTypes;
 }
 
@@ -116,27 +119,32 @@ export class CrossHairCursor extends React.Component<CrossHairCursorProps> {
             return undefined;
         }
 
-        const line1 = {
-            x1: 0,
-            x2: width,
-            y1: mouseXY[1] + 0.5,
-            y2: mouseXY[1] + 0.5,
-            stroke,
-            strokeDasharray,
-            opacity,
-        };
-
-        const x = customX(props, moreProps);
-
-        const line2 = {
-            x1: x,
-            x2: x,
-            y1: 0,
-            y2: height,
-            stroke,
-            strokeDasharray,
-            opacity,
-        };
-        return [line1, line2];
+        let lines = [];
+        if (this.props.showX != false) {
+            const line1 = {
+                x1: 0,
+                x2: width,
+                y1: mouseXY[1] + 0.5,
+                y2: mouseXY[1] + 0.5,
+                stroke,
+                strokeDasharray,
+                opacity,
+            };
+            lines.push(line1);
+        }
+        if (this.props.showY != false) {
+            const x = customX(props, moreProps);
+            const line2 = {
+                x1: x,
+                x2: x,
+                y1: 0,
+                y2: height,
+                stroke,
+                strokeDasharray,
+                opacity,
+            };
+            lines.push(line2);
+        }
+        return lines;
     }
 }
