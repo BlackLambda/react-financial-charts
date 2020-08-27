@@ -332,6 +332,8 @@ interface ChartCanvasProps {
     readonly onSelect?: any; // func
     readonly maintainPointsPerPixelOnResize?: boolean;
     readonly disableInteraction?: boolean;
+    readonly onMouseEnter?: () => void;
+    readonly onMouseLeave?: () => void;
 }
 
 interface ChartCanvasState {
@@ -995,6 +997,9 @@ export class ChartCanvas extends React.Component<ChartCanvasProps, ChartCanvasSt
     }
 
     public handleMouseEnter(e) {
+        if(this.props.onMouseEnter){
+            this.props.onMouseEnter();           
+        }
         this.triggerEvent("mouseenter", {
             show: true,
         }, e);
@@ -1032,6 +1037,9 @@ export class ChartCanvas extends React.Component<ChartCanvasProps, ChartCanvasSt
     }
 
     public handleMouseLeave(e) {
+        if(this.props.onMouseLeave){
+            this.props.onMouseLeave();
+        }
         this.triggerEvent("mouseleave", { show: false }, e);
         this.clearMouseCanvas();
         this.draw({ trigger: "mouseleave" });
